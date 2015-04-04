@@ -1,4 +1,5 @@
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.Random;
@@ -7,14 +8,12 @@ import javax.swing.JFrame;
 
 public class Main extends Canvas implements Runnable {
 
-	private JFrame frame = new JFrame();
+	public static JFrame frame = new JFrame();
 	private Thread thread;
 	private Display display;
 	private Config config;
 
 	private boolean running;
-	private final int WIDTH = 506;
-	private final int HEIGHT = 580;
 
 	public static int numberOfTrials = 1;
 	public static double counter = 1;
@@ -24,7 +23,11 @@ public class Main extends Canvas implements Runnable {
 	private static double runningSum;
 	public static double pi;
 
+	private static int size;
+
 	private Random r;
+
+	static boolean allowBuffer;
 
 	public static void main(String args[]) {
 		new Main().start();
@@ -32,13 +35,13 @@ public class Main extends Canvas implements Runnable {
 
 	public Main() {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(WIDTH, HEIGHT);
+		frame.setSize(10, 10);
 		frame.add(this);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setTitle("Monte Carlo Pi Simulation");
-		frame.setVisible(true);
-		display = new Display(WIDTH, HEIGHT);
+		frame.setVisible(false);
+		display = new Display(10, 10);
 		config = new Config();
 		r = new Random();
 	}
@@ -71,8 +74,10 @@ public class Main extends Canvas implements Runnable {
 				frames = 0;
 				ticks = 0;
 			}
-			render();
-			runAfap();
+			if (allowBuffer) {
+				render();
+				runAfap();
+			}
 		}
 	}
 
@@ -90,17 +95,25 @@ public class Main extends Canvas implements Runnable {
 
 	}
 
-	public static void setSimulationParams(int numberOfTrials, boolean simulating) {
+	public static void setSimulationParams(int numberOfTrials, int size, boolean simulating) {
 		Main.numberOfTrials = numberOfTrials;
 		Main.simulating = simulating;
-		Main.counter = 0;
-		runningSum = 0;
-		Display.setParams(numberOfTrials);
+		if (simulating) {
+			Main.counter = 0;
+			runningSum = 0;
+			Main.size = size;
+			Main.frame.setSize(new Dimension(size + 6, size + 93));
+			Main.frame.setVisible(true);
+			Main.frame.setLocationRelativeTo(null);
+		}
+		allowBuffer = true;
+
+		Display.setParams(numberOfTrials, size);
 	}
 
 	public void runAfap() {
 		if (simulating) {
-			if (counter - 1 < numberOfTrials) {
+			if (counter < numberOfTrials) {
 				runningSum += trial();
 				System.out.println("Counter: " + counter);
 			} else {

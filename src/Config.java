@@ -1,4 +1,5 @@
 import java.awt.Container;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -44,6 +45,16 @@ public class Config extends JFrame {
 
 		gbc.gridx = 1;
 		gbc.gridy = 3;
+		panel.add(new JLabel("Display Size"), gbc);
+
+		gbc.gridx = 1;
+		gbc.gridy = 4;
+		JTextField dispSize = new JTextField();
+		dispSize.setColumns(15);
+		panel.add(dispSize, gbc);
+
+		gbc.gridx = 1;
+		gbc.gridy = 5;
 		bSimulate = new JButton();
 		bSimulate.setText("Run Simulation");
 		panel.add(bSimulate, gbc);
@@ -53,22 +64,25 @@ public class Config extends JFrame {
 
 				if (bSimulate.getText().toLowerCase().equals("run simulation")) {
 					bSimulate.setText("Stop Simulation");
-					Main.setSimulationParams(Integer.parseInt(simDur.getText()), true);
+					Main.setSimulationParams(Integer.parseInt(simDur.getText()), Integer.parseInt(dispSize.getText()),
+							true);
+					Main.frame.toFront();
 				} else {
 					bSimulate.setText("Run Simulation");
-					Main.setSimulationParams(Integer.parseInt(simDur.getText()), false);
+					Main.setSimulationParams(Integer.parseInt(simDur.getText()), Integer.parseInt(dispSize.getText()),
+							false);
 				}
 			}
 		});
 
 		gbc.gridx = 1;
-		gbc.gridy = 4;
+		gbc.gridy = 6;
 		panel.add(new JLabel("Designed by"), gbc);
 		gbc.gridx = 1;
-		gbc.gridy = 5;
+		gbc.gridy = 7;
 		panel.add(new JLabel("Steven Marturano & Vidar Minkovsky"), gbc);
 		gbc.gridx = 1;
-		gbc.gridy = 6;
+		gbc.gridy = 8;
 		panel.add(new JLabel("ITS 102 - Spring 2015"), gbc);
 		pack();
 		setLocationRelativeTo(null);

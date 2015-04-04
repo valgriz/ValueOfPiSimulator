@@ -8,10 +8,14 @@ public class Display {
 	private static int width;
 	private static int height;
 
-	private static int[] xValues;
-	private static int[] yValues;
-	private static boolean[] values;
+	// private static int[] xValues;
+	// private static int[] yValues;
+	// private static boolean[] values;
+	private static int[][] screenRip;
 	private static int numberOfTrials;
+
+	public static int size;
+
 	private Random r;
 
 	public Display(int width, int height) {
@@ -20,11 +24,10 @@ public class Display {
 		r = new Random();
 	}
 
-	public static void setParams(int numberOfTrials) {
+	public static void setParams(int numberOfTrials, int size) {
 		Display.numberOfTrials = numberOfTrials;
-		xValues = new int[numberOfTrials + 1];
-		yValues = new int[numberOfTrials + 1];
-		values = new boolean[numberOfTrials + 1];
+		Display.size = size;
+		screenRip = new int[size][size];
 	}
 
 	public void update() {
@@ -32,35 +35,51 @@ public class Display {
 	}
 
 	public void plot(int counter, double x, double y, boolean inCirc) {
+
 		int a = r.nextInt(2);
 		if (a == 0)
 			a = -1;
-		xValues[counter] = (int) (250 + (a * (250 * x)));
+
 		int b = r.nextInt(2);
 		if (b == 0)
 			b = -1;
-		yValues[counter] = (int) (250 + (b * (250 * y)));
-		values[counter] = inCirc;
+		// xValues[counter] = (int) ((size / 2) + (a * ((size / 2) * x)));
+
+		int i = (int) ((size / 2) + (a * ((size / 2) * x)));
+		int j = (int) ((size / 2) + (b * ((size / 2) * y)));
+		if (inCirc)
+			screenRip[i][j] = 1;
+		else
+			screenRip[i][j] = 2;
+		// yValues[counter] = (int) ((size / 2) + (b * ((size / 2) * y)));
+		// values[counter] = inCirc;
 	}
 
 	public void paint(Graphics g) {
 		g.setColor(Color.white);
-		g.fillRect(0, 0, 500, 580);
+		g.fillRect(0, 0, size, size);
 		g.setColor(Color.black);
-		g.drawOval(0, 0, 500, 500);
-		g.fillRect(0, 500, 500, 80);
+		g.drawOval(0, 0, size, size);
+		g.fillRect(0, size, size, size * (80 / 500));
+		g.fillRect(0, size, size, 80);
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", Font.BOLD, 18));
-		g.drawString("Simulated value of Pi: " + Main.pi, 5, 522);
-		g.drawString("Number of trials: " + Main.numberOfTrials, 5, 545);
+		g.drawString("Simulated value of Pi: " + Main.pi, 5, size + 22);
+		g.drawString("Number of trials: " + (Main.counter - 1), 5, size + 45);
 
-		for (int i = 0; i < numberOfTrials; i++) {
-			if (values[i]) {
-				g.setColor(Color.red);
-			} else {
-				g.setColor(Color.blue);
+		for (int i = 0; i < size; i++) {
+
+			for (int j = 0; j < size; j++) {
+
+				if (screenRip[i][j] == 1) {
+					g.setColor(Color.red);
+				} else if (screenRip[i][j] == 2) {
+					g.setColor(Color.blue);
+				}
+				if (screenRip[i][j] != 0) {
+					g.fillRect(i, j, 1, 1);
+				}
 			}
-			g.drawRect(xValues[i], yValues[i], 1, 1);
 		}
 	}
 }
